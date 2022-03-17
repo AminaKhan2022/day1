@@ -33,6 +33,29 @@
 
         <p id="demo"> This text will change after button click</p>
 
+        <h2>HTML Forms</h2>
+
+        <form name="form1" method="post" onsubmit="processFormSubmission();">
+
+            <label for="fname">First name:</label><br />
+
+            <input type="text" id="fname" name="fname" value="John" /><br />
+
+            <label for="lname">Last name:</label><br />
+
+            <input type="text" id="lname" name="lname" value="Doe" /><br /><br />
+
+            <input type="submit" value="Submit" />
+        </form>
+
+
+        <br />
+
+        <p>First Name:</p>
+        <p id="form_fname">-</p>
+        <p>Last Name:</p>
+        <p id="form_lname">-</p>
+
         <script src="scripts/main.js"></script>
 
     </body>

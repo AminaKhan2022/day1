@@ -29,7 +29,7 @@ app.listen(process.env.port || 3000); //Port that the server 'listens' on
  
 //Serve static files in express
 //Specify the location of the static files for the web server
-// app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, "public")));
 //then e.g. this will work http://localhost:3000/images/firefox-icon.png
  
 console.log("Running at Port 3000");

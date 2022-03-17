@@ -16,6 +16,12 @@ Install node dependancies
 npm install
 ```
 
+Run application
+
+```bash
+npm run start
+```
+
 ## Usage
 
 Open index.html in your chosen web browser

@@ -10,6 +10,12 @@ Clone the repository:
 git clone  https://github.com/BingleKruger/day1.git
 ```
 
+Install node dependancies
+
+```bash
+npm install
+```
+
 ## Usage
 
 Open index.html in your chosen web browser

@@ -27,6 +27,8 @@ function processFormSubmission() {
     document.getElementById("form_lname").innerHTML = last_name;
 
     //do not submit the form
-    return false;
+    // return false;
+
+    return true; //submit the form
   }
  

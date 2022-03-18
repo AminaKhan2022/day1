@@ -1,35 +1,84 @@
-// Variables that gives us functionality offered by specific Node.js modules (i.e. packages)
-// Think of this as importing specific libraries for specific functionality
-// "path" package - navigating folders in our application - useful for joining two paths
-// "express" package - access to web server functionality [NB for web servers]
 const express = require("express");
-const app = express();
 const path = require("path");
+const sqlite3 = require("sqlite3").verbose(); // “.verbose()” method allows you to have more information in case of a problem.
+ 
+// Creating the Express server
+const app = express();
+ 
+//Creating the Express router
 const router = express.Router();
-
-//Define a route - a URL that will give us some functionality
-// "/" - refers to our landing page
-// http://localhost:3000
-// http://127.0.0.1:3000
+ 
+// Configure middleware
+app.use(express.static(path.join(__dirname, "public"))); //serve static files in express then e.g. this will work http://localhost:3000/images/firefox-icon.png
+app.use(express.urlencoded({ extended: false })); // use the middleware “express.urlencoded()” so that request.body retrieves the posted values
+ 
+// Connection to the SQlite database
+const db_name = path.join(__dirname, "data", "apptest.db");
+console.log("Database full path" + db_name); //Print out the location of our database
+const db = new sqlite3.Database(db_name, (err) => {
+ if (err) {
+   return console.error(err.message);
+ }
+ console.log("Successful connection to the database 'apptest.db'");
+});
+ 
+// Creating user table (userID, Name, Surname)
+const sql_create = `CREATE TABLE IF NOT EXISTS User (
+ User_ID INTEGER PRIMARY KEY AUTOINCREMENT,
+ Name VARCHAR(100) NOT NULL,
+ Surname VARCHAR(100) NOT NULL
+);`;
+db.run(sql_create, (err) => {
+ if (err) {
+   return console.error(err.message);
+ }
+ console.log("Successful creation of the 'User' table");
+ 
+ // Database seeding
+ const sql_insert = `INSERT INTO User (Name, Surname) VALUES
+ ('John', 'Doe'),
+ ('Bill', 'Gates');`;
+ db.run(sql_insert, (err) => {
+   if (err) {
+     return console.error(err.message);
+   }
+   console.log("Successful creation of 2 users");
+ });
+});
+ 
+// GET /
 router.get("/", function (req, res) {
-   //If a browser gets this request, what should the response be
-   res.sendFile(path.join(__dirname + "/views/index.html"));
-   //__dirname : It will resolve to your project folder.
+ res.sendFile(__dirname + "/views/index.html"); //__dirname resolves to your project folder.
+ 
+ //The sendfile method, on the other hand, simply sends a given file to the client, regardless of the type and contents of the file.
+ //render allows processing of variables but requires use of a templating engine e.g. name
+ //  res.sendFile(
+ //    path.join(__dirname + "/views/index.html")
+ //  );
 });
-
-// Example of adding an additional route
-// e.g. https://google.com/about
+ 
+// GET /about
 router.get("/about", function (req, res) {
-    res.sendFile(path.join(__dirname + "/views/about.html"));
+ res.sendFile(path.join(__dirname + "/views/about.html"));
 });
-
-//Add the router
+ 
+// POST /
+router.post("/", function (req, res) {
+ const user = [req.body.fname, req.body.lname];
+ console.log("Submitted name: " + req.body.fname);
+ console.log("Submitted surname: " + req.body.lname);
+ const sql = "INSERT INTO User (Name, Surname) VALUES (?,?)";
+ db.run(sql, user, (err) => {
+   // if (err) ...
+   res.sendFile(__dirname + "/views/index.html");
+   //res.redirect("/");
+ });
+});
+ 
+//add the router
 app.use("/", router);
-app.listen(process.env.port || 3000); //Port that the server 'listens' on
  
-//Serve static files in express
-//Specify the location of the static files for the web server
-app.use(express.static(path.join(__dirname, "public")));
-//then e.g. this will work http://localhost:3000/images/firefox-icon.png
- 
-console.log("Running at Port 3000");
+// Starting the server
+app.listen(3000, () => {
+ console.log("Server started (http://localhost:3000/) !");
+});
